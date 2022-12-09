@@ -25,7 +25,7 @@
 	<img src="https://user-images.githubusercontent.com/83260809/206208258-81a7f740-3d1a-4acf-b622-1177479a8947.png">
 </div>
 
-## Getting Started : Developers
+<!--## Getting Started : Developers-->
 
 ## Getting Started : Users
 유저의 사용 과정을 설명합니다
