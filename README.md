@@ -85,4 +85,4 @@ Start Guide에 위치한 qr코드를 통해 친구 추가 합니다.
 * 백지원 -  wldnjsl2001@khu.ac.kr
 * 임성건 -  happykhu0715@khu.ac.kr
 
-## How to meet KHUBOBBOT
+<!--## How to meet KHUBOBBOT-->
