@@ -29,10 +29,14 @@
 
 ## Getting Started : Users
 유저의 사용 과정을 설명합니다
+<br>
+Start Guide에 위치한 qr코드를 통해 친구 추가 합니다.
+챗봇의 안내에 따라 메뉴, 카테고리, 식당 상세정보를 확인합니다.
 
 ### Prerequisites
 * Line
 라인 앱 설치가 선행되어야 합니다.
+
 
 ### Start Guide
 라인 친구 추가 메뉴에서 QR코드로 친구 추가 <br><br>
@@ -40,8 +44,22 @@
 ![QR코드](image/QR.png)<br><br>
 
 ## Usage
+<div align="center">
+<h5>간략한 기능 안내</h5>
+<br>
+<h5>첫 메뉴 화면</h5>
+<img src="https://user-images.githubusercontent.com/83260809/206627011-045abd20-db4b-4b2c-afe1-8f7c054fd0a3.jpg">
+<h5>카테고리화</h5>
+<img src="https://user-images.githubusercontent.com/83260809/206627021-dd679646-67de-4597-9a99-77d253a4449d.jpg">
+<h5>식당상세정보</h5>
+<img src="https://user-images.githubusercontent.com/83260809/206627034-b4fe9a78-859f-4301-a8db-f58b707a923c.jpg">
+</div>
 
 ## Roadmap
++ 학교 주변 맛집 정보 크롤링으로 추출
++ ec2-rds연결
++ 맛집 추천순으로 데이터 저장
++ ec2에 excel파일 넣기 위해서 python 자동화 툴 생성
 
 ## Contributing
 
@@ -55,14 +73,15 @@
 
 ## License
 
+
 ## Contact
 ### 조장 
-* 우하은 -
+* 우하은 -  suaveh97@khu.ac.kr
 ### 조원 
 * 김윤지 -  rmatlr0112@khu.ac.kr
 * 김현원 -  khw7385@khu.ac.kr
-* 박찬미 - 
-* 백지원 - wldnjsl2001@khu.ac.kr
-* 임성건 -
+* 박찬미 -  astnv31@khu.ac.kr
+* 백지원 -  wldnjsl2001@khu.ac.kr
+* 임성건 -  happykhu0715@khu.ac.kr
 
 ## How to meet KHUBOBBOT
