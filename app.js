@@ -6,39 +6,20 @@ const TOKEN = 'Zd+BLpi6wLHMngB3EK74S1W7ApnAXuYZ86xGIi60JKrSW0xI0JyXlCzpunYxk9fxt
 const fs = require('fs');
 const path = require('path');
 const HTTPS = require('https');
-const domain = "osschatbot.tk"
+const domain = "yoongja.shop"
 const sslport = 23023;
 
 const bodyParser = require('body-parser');
 var app = express();
 app.use(bodyParser.json());
-let language = ""
-let guideMessageText = {};
 
-const food_menu_arr = [
-    {index : 1, kr_name: "한식", en_name: 'korean'}, 
-    {index : 2, kr_name: "중식", en_name: 'chinese'}, 
-    {index : 3, kr_name: "양식", en_name: 'western'}, 
-    {index : 4, kr_name: "일식", en_name: 'japanese'}, 
-    {index : 5, kr_name: "분식", en_name: 'snack'}, 
-    {index : 6, kr_name: "아시안", en_name: 'asian'}, 
-    {index : 7, kr_name: "패스트푸드", en_name: 'fast food'}, 
-    {index : 8, kr_name: "학식", en_name: 'school food'},
-    {index : 9, kr_name: "카페", en_name : 'cafe'}
-];
-const message_object = {
-    request_error :[
-        "음식을 다시 입력 해주세요.",
-        "Please enter the food again"
-    ],
-    food_name_version : [
-        "kr_name",
-        "en_name"
-    ]
-}
+const mysql = require("./mysql.js");
 
+const restaurant_table = mysql.restaurant_table;
+const menu_table = mysql.menu_table;
+const schoolfood_table = mysql.schoolfood_table;
 
-let language_index = 0;
+const food_menu_arr = ["한식", "중식", "양식", "일식", "분식", "아시안", "패스트 푸드", "학식", "카페"];
 
 app.post('/hook', function (req, res){
     var eventObj = req.body.events[0];
@@ -50,35 +31,25 @@ app.post('/hook', function (req, res){
     console.log('[request]', req.body);
     console.log('[request source] ', eventObj.source);
     console.log('[request message]', eventObj.message);
-    
-    language = detect_language(message.text);
-    if (language == "Koeran") language_index = 0;
-    else if (language == "English") language_index = 1;
 
+    var food = food_menu_arr.find(element =>  element == message.text);
+    var restaurant_info = restaurant_table.find(element => element.name == message.text);
 
-    var food = food_menu_arr.find(element => element.index ==  message.text || element.kr_name == message.text || element.en_name == message.text.toLowerCase());
-    
-    if (message.text == "메뉴" || message.text.toLowerCase() == "menu"){    
-        send_menu(eventObj, language_index);
+    if (message.text == "메뉴"){
+        send_menu(eventObj);
     } 
     else if (food !=  undefined){
-        send_restaurant(eventObj, language_index);
+        send_restaurant(eventObj, food);
+    }
+    else if(restaurant_info != undefined){
+        send_restaurant_info(eventObj, restaurant_info);
     }
     else{
-        send_error_message(eventObj, language_index);
+        send_error_message(eventObj);
     }
     
     res.sendStatus(200);
 });
-
-function detect_language(message){
-    if (message.match(/^[a-z|A-Z]+$/)){
-        return "English"
-    }
-    else if (message.match(/^[가-힣]+$/)){
-        return "Korean"
-    }
-}
 
 function food_row_layout(food){
     return {
@@ -92,7 +63,7 @@ function food_row_layout(food){
         "color": "#EEEEEE"
     }
 }
-function send_menu(eventObj, language_index){
+function send_menu(eventObj){
     request.post(
         {
             url: REPLY_TARGET_URL,
@@ -115,27 +86,27 @@ function send_menu(eventObj, language_index){
                                         "type":"box",
                                         "layout":"horizontal",
                                         "contents":[
-                                            food_row_layout(food_menu_arr[0][message_object.food_name_version[language_index]]),
-                                            food_row_layout(food_menu_arr[1][message_object.food_name_version[language_index]]),
-                                            food_row_layout(food_menu_arr[2][message_object.food_name_version[language_index]])
+                                            food_row_layout(food_menu_arr[0]),
+                                            food_row_layout(food_menu_arr[1]),
+                                            food_row_layout(food_menu_arr[2])
                                         ]
                                     },
                                     {
                                         "type":"box",
                                         "layout":"horizontal",
                                         "contents":[
-                                            food_row_layout(food_menu_arr[3][message_object.food_name_version[language_index]]),
-                                            food_row_layout(food_menu_arr[4][message_object.food_name_version[language_index]]),
-                                            food_row_layout(food_menu_arr[5][message_object.food_name_version[language_index]])    
+                                            food_row_layout(food_menu_arr[3]),
+                                            food_row_layout(food_menu_arr[4]),
+                                            food_row_layout(food_menu_arr[5])
                                         ]
                                     },
                                     {
                                         "type":"box",
                                         "layout":"horizontal",
                                         "contents":[
-                                            food_row_layout(food_menu_arr[6][message_object.food_name_version[language_index]]),
-                                            food_row_layout(food_menu_arr[7][message_object.food_name_version[language_index]]),
-                                            food_row_layout(food_menu_arr[8][message_object.food_name_version[language_index]])
+                                            food_row_layout(food_menu_arr[6]),
+                                            food_row_layout(food_menu_arr[7]),
+                                            food_row_layout(food_menu_arr[8])
                                         ]
                                 }
                                 ]
@@ -152,7 +123,26 @@ function send_menu(eventObj, language_index){
     )
 }
 
-function send_restaurant(eventObj, language_index){
+function send_restaurant(eventObj, food){
+    let restaurants = [];
+    let idx = 0;
+    let length = restaurant_table.length;
+    for(let i = 0; i < length; i++){
+        if(restaurant_table[i].category == food){
+            restaurants[idx] = {
+                "title": restaurant_table[i].name,
+                "text": "평점: " + restaurant_table[i].point + "\n주소: " + restaurant_table[i].address,
+                "actions": [
+                {
+                    "type": "message",
+                    "label": "press",
+                    "text":restaurant_table[i].name
+                }
+            ]};
+            idx++;
+        }
+        if(idx >= 10){break;}
+    };
     request.post(
         {
             url: REPLY_TARGET_URL,
@@ -167,41 +157,7 @@ function send_restaurant(eventObj, language_index){
                         "altText": "this is a carousel template",
                         "template": {
                           "type": "carousel",
-                          "columns": [
-                            {
-                              "title": "카페서천",
-                              "text": "카페서천 is ...",
-                              "actions": [
-                                {
-                                  "type": "message",
-                                  "label": "press",
-                                  "text":"카페서천"
-                                }
-                              ]
-                            },
-                            {
-                                "title": "카페서천",
-                                "text": "카페서천 is ...",
-                                "actions": [
-                                  {
-                                    "type": "message",
-                                    "label": "press",
-                                    "text":"카페서천"
-                                  }
-                                ]
-                              },
-                              {
-                                "title": "카페서천",
-                                "text": "카페서천 is ...",
-                                "actions": [
-                                  {
-                                    "type": "message",
-                                    "label": "press",
-                                    "text":"카페서천"
-                                  }
-                                ]
-                              },
-                            ]
+                          "columns": restaurants
                         }
                     }
                 ]
@@ -211,29 +167,45 @@ function send_restaurant(eventObj, language_index){
         });
 }
 
-function send_map(eventObj, language_index){
-    request.post({
-        url: REPLY_TARGET_URL,
-            headers: {
-                Authorization: `Bearer ${TOKEN}`
+
+function send_restaurant_info(eventObj, restaurant_info){
+    let menu = ""
+    
+    for(let i = 0; i <menu_table.length; i++){
+        if(menu_table[i].name == restaurant_info.name){
+            menu += menu_table[i].menu + "  " +menu_table[i].price +"\n";
+        }
+    }
+    if (menu == ""){
+        menu = "메뉴 정보 없음"
+    }
+
+    request.post(
+        {
+            url:REPLY_TARGET_URL,
+            headers:{
+                'Authorization' :`Bearer ${TOKEN}`
             },
-            json: {
-                "replyToken":eventObj.replyToken,
+            json:{
+                "replyToken": eventObj.replyToken,
                 "messages":[
                     {
                         "type": "location",
-                        "title": "my location",
-                        "address": "1-6-1 Yotsuya, Shinjuku-ku, Tokyo, 160-0004, Japan",
-                        "latitude": 37.5666805,
-                        "longitude": 126.9784147139
+                        "title": restaurant_info.name,
+                        "address": restaurant_info.address,
+                        "latitude": restaurant_info.latitude,
+                        "longitude": restaurant_info.longitude
+                    },
+                    {
+                        "type": "text",
+                        "text": menu
                     }
                 ]
-            },
-        },(error, response, body) => {
-                console.log(body)
-        })
+            }
+        }
+    )
 }
-function send_error_message(eventObj, language_index){
+function send_error_message(eventObj){
     request.post(
         {
             url:REPLY_TARGET_URL,
@@ -245,7 +217,7 @@ function send_error_message(eventObj, language_index){
                 "messages":[
                     {
                         "type" : "text",
-                        "text": message_object.request_error[language_index]
+                        "text": "다시 입력해주세요."
                     },
                 ]
             }
