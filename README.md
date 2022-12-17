@@ -73,7 +73,8 @@ Start Guide에 위치한 qr코드를 통해 친구 추가 합니다.
 5. Open a Pull Request
 
 ## License
-
+khuBobBot은 MIT License에 따라 배포됩니다.
+자세한 내용은 ```License```를 참고해주십시오.
 
 ## Contact
 ### 조장 
