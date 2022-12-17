@@ -84,6 +84,6 @@ khuBobBot은 MIT License에 따라 배포됩니다.
 * 김현원 -  khw7385@khu.ac.kr
 * 박찬미 -  astnv31@khu.ac.kr
 * 백지원 -  wldnjsl2001@khu.ac.kr
-* 임성건 -  happykhu0715@khu.ac.kr
+* 임성건 -  happykhu0715@khu.ac.kr 
 
 <!--## How to meet KHUBOBBOT-->
