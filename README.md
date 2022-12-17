@@ -30,9 +30,9 @@
 ## Getting Started : Users
 유저의 사용 과정을 설명합니다
 <br>
-Start Guide에 위치한 qr코드를 통해 친구 추가 합니다.
+1. Start Guide에 위치한 qr코드를 통해 친구 추가 합니다.
 <br>
-챗봇의 안내에 따라 메뉴, 카테고리, 식당 상세정보를 확인합니다.
+2. 챗봇의 안내에 따라 메뉴, 카테고리, 식당 상세정보를 확인합니다.
 
 ### Prerequisites
 * Line
@@ -73,7 +73,7 @@ Start Guide에 위치한 qr코드를 통해 친구 추가 합니다.
 5. Open a Pull Request
 
 ## License
-khuBobBot은 MIT License에 따라 배포됩니다.
+khuBOBbot은 MIT License에 따라 배포됩니다.
 자세한 내용은 ```License```를 참고해주십시오.
 
 ## Contact
